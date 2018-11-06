@@ -1,5 +1,5 @@
 ###
-# Application example
+# User Manager
 ###
 
 kind: Deployment
@@ -9,7 +9,7 @@ metadata:
     cluster: management
     component: user-manager
   name: user-manager
-  namespace: default
+  namespace: nalej
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -27,6 +27,11 @@ spec:
       - name: user-manager
         image: nalej/user-manager:VERSION
         imagePullPolicy: IfNotPresent
+        args:
+        - "run"
+        - "--debug"
+        - "--systemModelAddress=system-model.nalej:8800"
+        - "--authxAddress=authx.nalej:8810"
         securityContext:
           runAsUser: 2000
       imagePullSecrets:

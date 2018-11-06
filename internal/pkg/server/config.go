@@ -5,8 +5,9 @@
 package server
 
 import (
-"github.com/nalej/derrors"
-"github.com/rs/zerolog/log"
+	"github.com/nalej/derrors"
+	"github.com/nalej/user-manager/version"
+	"github.com/rs/zerolog/log"
 )
 
 type Config struct {
@@ -32,6 +33,7 @@ func (conf * Config) Validate() derrors.Error {
 }
 
 func (conf *Config) Print() {
+	log.Info().Str("app", version.AppVersion).Str("commit", version.Commit).Msg("Version")
 	log.Info().Int("port", conf.Port).Msg("gRPC port")
 	log.Info().Str("URL", conf.AuthxAddress).Msg("Authx")
 	log.Info().Str("URL", conf.SystemModelAddress).Msg("System Model")
