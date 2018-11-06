@@ -31,8 +31,6 @@ func NewManager(
 
 // AddUser adds a new user to an organization.
 func (m * Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (*grpc_user_manager_go.User, error){
-	panic("addUser")
-
 	addRequest := &grpc_user_go.AddUserRequest{
 		OrganizationId:       addUserRequest.OrganizationId,
 		Email:                addUserRequest.Email,
