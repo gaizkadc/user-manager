@@ -13,6 +13,7 @@ import (
 	"github.com/nalej/grpc-user-manager-go"
 	"github.com/nalej/grpc-utils/pkg/conversions"
 	"github.com/nalej/user-manager/internal/pkg/entities"
+	"github.com/rs/zerolog/log"
 )
 
 // Handler structure for the user requests.
@@ -27,6 +28,8 @@ func NewHandler(manager Manager) *Handler{
 
 // AddUser adds a new user to an organization.
 func (h*Handler) AddUser(ctx context.Context, addUserRequest *grpc_user_manager_go.AddUserRequest) (*grpc_user_manager_go.User, error){
+	log.Debug().Str("organizationID", addUserRequest.OrganizationId).Str("roleID", addUserRequest.RoleId).
+		Str("email", addUserRequest.Email).Msg("add user")
 	err := entities.ValidAddUserRequest(addUserRequest)
 	if err != nil{
 		return nil, conversions.ToGRPCError(err)
@@ -35,6 +38,8 @@ func (h*Handler) AddUser(ctx context.Context, addUserRequest *grpc_user_manager_
 	if aErr != nil{
 		return nil, aErr
 	}
+	log.Debug().Str("organizationID", addUserRequest.OrganizationId).
+		Str("email", addUserRequest.Email).Msg("user has been added")
 	return user, nil
 }
 
@@ -49,6 +54,7 @@ func (h*Handler) GetUser(ctx context.Context, userID * grpc_user_go.UserId) (*gr
 
 // RemoveUser removes a given user from the system.
 func (h*Handler) RemoveUser(ctx context.Context, userID *grpc_user_go.UserId) (*grpc_common_go.Success, error){
+	log.Debug().Str("organizationID", userID.OrganizationId).Str("email", userID.Email).Msg("remove user")
 	err := entities.ValidUserID(userID)
 	if err != nil{
 		return nil, conversions.ToGRPCError(err)
@@ -75,6 +81,7 @@ func (h*Handler) ChangePassword(ctx context.Context, request *grpc_authx_go.Chan
 
 // AddRole adds a new role to an organization.
 func (h*Handler) AddRole(ctx context.Context, addRoleRequest *grpc_user_manager_go.AddRoleRequest) (*grpc_authx_go.Role, error){
+	log.Debug().Str("organizationID", addRoleRequest.OrganizationId).Str("name", addRoleRequest.Name).Msg("add role")
 	err := entities.ValidAddRoleRequest(addRoleRequest)
 	if err != nil{
 		return nil, conversions.ToGRPCError(err)
@@ -83,6 +90,7 @@ func (h*Handler) AddRole(ctx context.Context, addRoleRequest *grpc_user_manager_
 	if aErr != nil{
 		return nil, aErr
 	}
+	log.Debug().Str("organizationID", addRoleRequest.OrganizationId).Str("roleID", role.RoleId).Msg("role has been created")
 	return role, nil
 }
 
