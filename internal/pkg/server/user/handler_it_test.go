@@ -177,6 +177,26 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(retrieved.Email).Should(gomega.Equal(added.Email))
 	})
 
+	ginkgo.It("should be able to list the users in an organizationID", func(){
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId:       targetOrganization.OrganizationId,
+			Email:                GetRandomEmail(),
+			Password:             "password",
+			Name:                 "user",
+			RoleId:               targetRole.RoleId,
+		}
+		added, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		organizationID := &grpc_organization_go.OrganizationId{
+			OrganizationId:       targetOrganization.OrganizationId,
+		}
+	    users, err := client.ListUsers(context.Background(), organizationID)
+	    gomega.Expect(err).To(gomega.Succeed())
+	    gomega.Expect(len(users.Users)).Should(gomega.Equal(1))
+	    gomega.Expect(users.Users[0].Email).Should(gomega.Equal(added.Email))
+	})
+
 	ginkgo.It("should be able to remove a user", func(){
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId:       targetOrganization.OrganizationId,
@@ -197,7 +217,7 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(success).ShouldNot(gomega.BeNil())
 	})
 
-	ginkgo.PIt("should be able to change the password of a user", func(){
+	ginkgo.It("should be able to change the password of a user", func(){
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId:       targetOrganization.OrganizationId,
 			Email:                GetRandomEmail(),
