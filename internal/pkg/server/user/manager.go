@@ -82,9 +82,32 @@ func (m * Manager) RemoveUser(userID *grpc_user_go.UserId) error{
 	return nil
 }
 
+func (m*Manager) ListUsers(organizationID * grpc_organization_go.OrganizationId) (*grpc_user_manager_go.UserList, error){
+	users, err := m.usersClient.GetUsers(context.Background(), organizationID)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]*grpc_user_manager_go.User, 0)
+	for _, u := range users.Users {
+		uID := &grpc_user_go.UserId{
+			OrganizationId:       u.OrganizationId,
+			Email:                u.Email,
+		}
+		info, err := m.GetUser(uID)
+		if err != nil{
+			return nil, err
+		}
+		result = append(result, info)
+	}
+	return &grpc_user_manager_go.UserList{
+		Users:                result,
+	}, nil
+}
+
 // ChangePassword updates the password of a user.
 func (m*Manager) ChangePassword(request *grpc_authx_go.ChangePasswordRequest) error{
-	panic("ChangePassword")
+	_, err := m.accessClient.ChangePassword(context.Background(), request)
+	return err
 }
 
 // AddRole adds a new role to an organization.

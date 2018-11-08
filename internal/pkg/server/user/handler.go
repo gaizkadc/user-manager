@@ -66,6 +66,14 @@ func (h*Handler) RemoveUser(ctx context.Context, userID *grpc_user_go.UserId) (*
 	return &grpc_common_go.Success{}, nil
 }
 
+func (h*Handler) ListUsers(ctx context.Context, organizationID * grpc_organization_go.OrganizationId) (*grpc_user_manager_go.UserList, error){
+	err := entities.ValidOrganizationID(organizationID)
+	if err != nil{
+		return nil, conversions.ToGRPCError(err)
+	}
+	return h.Manager.ListUsers(organizationID)
+}
+
 // ChangePassword updates the password of a user.
 func (h*Handler) ChangePassword(ctx context.Context, request *grpc_authx_go.ChangePasswordRequest) (*grpc_common_go.Success, error){
 	err := entities.ValidChangePasswordRequest(request)
