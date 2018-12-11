@@ -65,8 +65,8 @@
 [[projects]]
   name = "github.com/nalej/grpc-user-go"
   packages = ["."]
-  revision = "819166abd87c1f80c22a7072d9c38c0643fe1b8b"
-  version = "v0.0.26"
+  revision = "e6eb9a9f7aac71e72f88ac2cb46c2e6cf7c45ab3"
+  version = "v0.0.27"
 
 [[projects]]
   name = "github.com/nalej/grpc-user-manager-go"
@@ -81,8 +81,8 @@
     "pkg/test",
     "pkg/tools"
   ]
-  revision = "fff7657002d0a5995a046522eace2bcb03830457"
-  version = "v1.3.0"
+  revision = "3763d699ec598000c8095dc4d2e86a3ec0a169ff"
+  version = "v1.3.1"
 
 [[projects]]
   name = "github.com/onsi/ginkgo"

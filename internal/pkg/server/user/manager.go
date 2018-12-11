@@ -194,14 +194,5 @@ func (m *Manager) ListRoles(organizationID *grpc_organization_go.OrganizationId)
 }
 
 func (m *Manager) UpdateUser(updateUserRequest *grpc_user_go.UpdateUserRequest) (*grpc_common_go.Success, error) {
-	if updateUserRequest.Role != "" {
-		_, err := m.accessClient.EditUserRole(context.Background(), &grpc_authx_go.EditUserRoleRequest{
-			Username:  updateUserRequest.Email,
-			NewRoleId: updateUserRequest.Role,
-		})
-		if err != nil {
-			return nil, err
-		}
-	}
 	return m.usersClient.Update(context.Background(), updateUserRequest)
 }
