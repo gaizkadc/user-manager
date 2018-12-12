@@ -227,8 +227,8 @@ var _ = ginkgo.Describe("User service", func() {
 		added, err := client.AddUser(context.Background(), toAdd)
 		gomega.Expect(err).To(gomega.Succeed())
 
-		changeRequest := &grpc_authx_go.ChangePasswordRequest{
-			Username:    added.Email,
+		changeRequest := &grpc_user_manager_go.ChangePasswordRequest{
+			Email:    added.Email,
 			Password:    toAdd.Password,
 			NewPassword: "newPassword",
 		}

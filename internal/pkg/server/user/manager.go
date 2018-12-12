@@ -7,10 +7,12 @@ package user
 import (
 	"context"
 	"github.com/nalej/grpc-authx-go"
+	"github.com/nalej/grpc-common-go"
 	"github.com/nalej/grpc-organization-go"
 	"github.com/nalej/grpc-role-go"
 	"github.com/nalej/grpc-user-go"
 	"github.com/nalej/grpc-user-manager-go"
+	"github.com/nalej/user-manager/internal/pkg/entities"
 )
 
 // Manager structure with the required clients for roles operations.
@@ -105,8 +107,9 @@ func (m *Manager) ListUsers(organizationID *grpc_organization_go.OrganizationId)
 }
 
 // ChangePassword updates the password of a user.
-func (m *Manager) ChangePassword(request *grpc_authx_go.ChangePasswordRequest) error {
-	_, err := m.accessClient.ChangePassword(context.Background(), request)
+func (m *Manager) ChangePassword(request *grpc_user_manager_go.ChangePasswordRequest) error {
+	authxRequest := entities.ToChangePasswordRequest(request)
+	_, err := m.accessClient.ChangePassword(context.Background(), authxRequest)
 	return err
 }
 
@@ -188,4 +191,8 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 // ListRoles obtains a list of roles in an organization.
 func (m *Manager) ListRoles(organizationID *grpc_organization_go.OrganizationId) (*grpc_authx_go.RoleList, error) {
 	return m.accessClient.ListRoles(context.Background(), organizationID)
+}
+
+func (m *Manager) UpdateUser(updateUserRequest *grpc_user_go.UpdateUserRequest) (*grpc_common_go.Success, error) {
+	return m.usersClient.Update(context.Background(), updateUserRequest)
 }

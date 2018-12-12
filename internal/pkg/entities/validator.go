@@ -90,8 +90,11 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 	return nil
 }
 
-func ValidChangePasswordRequest(request *grpc_authx_go.ChangePasswordRequest) derrors.Error {
-	if request.Username == "" {
+func ValidChangePasswordRequest(request *grpc_user_manager_go.ChangePasswordRequest) derrors.Error {
+	if request.OrganizationId == "" {
+		return derrors.NewInvalidArgumentError(emptyOrganizationId)
+	}
+	if request.Email == "" {
 		return derrors.NewInvalidArgumentError(emptyEmail)
 	}
 	if request.Password == "" {
@@ -99,6 +102,16 @@ func ValidChangePasswordRequest(request *grpc_authx_go.ChangePasswordRequest) de
 	}
 	if request.NewPassword == "" {
 		return derrors.NewInvalidArgumentError("new_password cannot be empty")
+	}
+	return nil
+}
+
+func ValidUpdateUserRequest(addUserRequest *grpc_user_go.UpdateUserRequest) derrors.Error {
+	if addUserRequest.OrganizationId == "" {
+		return derrors.NewInvalidArgumentError(emptyOrganizationId)
+	}
+	if addUserRequest.Email == "" {
+		return derrors.NewInvalidArgumentError(emptyEmail)
 	}
 	return nil
 }
