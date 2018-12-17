@@ -2,6 +2,7 @@
 
 
 [[projects]]
+  digest = "1:3dd078fda7500c341bc26cfbc6c6a34614f295a2457149fc1045cab767cbcf18"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -9,82 +10,104 @@
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
-    "ptypes/timestamp"
+    "ptypes/timestamp",
   ]
+  pruneopts = ""
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:b3c5b95e56c06f5aa72cb2500e6ee5f44fcd122872d4fec2023a488e561218bc"
   name = "github.com/hpcloud/tail"
   packages = [
     ".",
     "ratelimiter",
     "util",
     "watch",
-    "winfile"
+    "winfile",
   ]
+  pruneopts = ""
   revision = "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
+  pruneopts = ""
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:0cc441f3dfe124dd74f44dd7e466dfc17cc7edff468094fbc3847a96b5ebf6f7"
   name = "github.com/nalej/derrors"
   packages = ["."]
+  pruneopts = ""
   revision = "7a6df7f0bb1c7cddfec82c91119f193f6fcbc9d5"
   version = "v2.0.0"
 
 [[projects]]
+  digest = "1:76d3c08d8109b05c55a006240cd62b592ec5b767f6ad17fdc2c6a15beb3cfe12"
   name = "github.com/nalej/grpc-authx-go"
   packages = ["."]
-  revision = "82ad38cb14e1b1c7ef0cee3c1d732f1da074fe07"
-  version = "v0.0.32"
+  pruneopts = ""
+  revision = "dd05afa87d6048890f2cc38a4f6169de7fb140ce"
+  version = "v0.0.34"
 
 [[projects]]
+  digest = "1:553e0a6941f0dd6a5f61975032c4a3933a40e910c45b41cfae4b7ee2a946e1ca"
   name = "github.com/nalej/grpc-common-go"
   packages = ["."]
-  revision = "d05db38d063d5e1c74fbd99f1068680989385623"
-  version = "v0.0.27"
+  pruneopts = ""
+  revision = "3a819d5336e7dcdd6b103eb0c78aafd48a01e70c"
+  version = "v0.0.29"
 
 [[projects]]
+  digest = "1:9921e275160e1559963d6452a918027db3563746fd03f63369ab104c0fbf16bf"
   name = "github.com/nalej/grpc-organization-go"
   packages = ["."]
-  revision = "0efca14a572921077be45c982e69cb23a221f0e4"
-  version = "v0.0.26"
+  pruneopts = ""
+  revision = "c571882666c05213df408ae9da8ab08f71a7a7bb"
+  version = "v0.0.28"
 
 [[projects]]
+  digest = "1:2bbb1e2d89bd97204a9e349706f4feeed02732dbc81803b27610d7afa6bc212b"
   name = "github.com/nalej/grpc-role-go"
   packages = ["."]
-  revision = "390fa37025612b5c466d810a2486d6c12dba5b34"
-  version = "v0.0.20"
+  pruneopts = ""
+  revision = "d4aa1db73ece1972e462a58d0ff6916a2d106aa5"
+  version = "v0.0.22"
 
 [[projects]]
+  digest = "1:2b6ef08f73e4e40c25b3cbe313d9727cf01210696fe73af5a03231f5a1a4fb21"
   name = "github.com/nalej/grpc-user-go"
   packages = ["."]
-  revision = "e6eb9a9f7aac71e72f88ac2cb46c2e6cf7c45ab3"
+  pruneopts = ""
+  revision = "8ecd6a2ce62ad6167d10288c5decd043bfb0ac72"
+  version = "v0.0.29"
+
+[[projects]]
+  digest = "1:4c09c5e7ee1daa8e85927a745dc6c928ee2da9f7be3820c35ab1649d15ab5783"
+  name = "github.com/nalej/grpc-user-manager-go"
+  packages = ["."]
+  pruneopts = ""
+  revision = "647ceab0fbdf42fea3148ef2be4a13b4776a0a8f"
   version = "v0.0.27"
 
 [[projects]]
-  name = "github.com/nalej/grpc-user-manager-go"
-  packages = ["."]
-  revision = "c0ca6249a7d0d6e947a472bda48a98eaa9a88b3a"
-  version = "v0.0.24"
-
-[[projects]]
+  digest = "1:a55e0792c0a632d14fc0f7a1c4b55ed2973189c2267d7197c2e13b1a44371466"
   name = "github.com/nalej/grpc-utils"
   packages = [
     "pkg/conversions",
     "pkg/test",
-    "pkg/tools"
+    "pkg/tools",
   ]
+  pruneopts = ""
   revision = "3763d699ec598000c8095dc4d2e86a3ec0a169ff"
   version = "v1.3.1"
 
 [[projects]]
+  digest = "1:a754db3c70741eeaeba73ec4cd970dc8918d06ced993d24891e9c0386d74f588"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -104,12 +127,14 @@
     "reporters/stenographer",
     "reporters/stenographer/support/go-colorable",
     "reporters/stenographer/support/go-isatty",
-    "types"
+    "types",
   ]
+  pruneopts = ""
   revision = "2e1be8f7d90e9d3e3e58b0ce470f2f14d075406f"
   version = "v1.7.0"
 
 [[projects]]
+  digest = "1:c8f0c8c28c9c1c51db72d0e7f04797cfe5d0d50528274099b6b2d6c314db7f97"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -123,36 +148,44 @@
     "matchers/support/goraph/edge",
     "matchers/support/goraph/node",
     "matchers/support/goraph/util",
-    "types"
+    "types",
   ]
+  pruneopts = ""
   revision = "65fb64232476ad9046e57c26cd0bff3d3a8dc6cd"
   version = "v1.4.3"
 
 [[projects]]
+  digest = "1:d518eb4bfb76545977b0be8549606e6de5c56f8887b84cc24d12f5ec1c587e3a"
   name = "github.com/rs/zerolog"
   packages = [
     ".",
     "internal/cbor",
     "internal/json",
-    "log"
+    "log",
   ]
+  pruneopts = ""
   revision = "8747b7b3a51b5d08ee7ac50eaf4869edaf9f714a"
   version = "v1.11.0"
 
 [[projects]]
+  digest = "1:a1403cc8a94b8d7956ee5e9694badef0e7b051af289caad1cf668331e3ffa4f6"
   name = "github.com/spf13/cobra"
   packages = ["."]
+  pruneopts = ""
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
   version = "v0.0.3"
 
 [[projects]]
+  digest = "1:cbaf13cdbfef0e4734ed8a7504f57fe893d471d62a35b982bf6fb3f036449a66"
   name = "github.com/spf13/pflag"
   packages = ["."]
+  pruneopts = ""
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
 
 [[projects]]
   branch = "master"
+  digest = "1:3b4532388bb9dfcc98530527160974cf5ec03120002887777516a98092725ba0"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -164,17 +197,21 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
-    "trace"
+    "trace",
   ]
-  revision = "610586996380ceef02dd726cc09df7e00a3f8e56"
+  pruneopts = ""
+  revision = "e147a9138326bc0e9d4e179541ffd8af41cff8a9"
 
 [[projects]]
   branch = "master"
+  digest = "1:c2c4c39f961dde3f317a48713db65329863b61316edabf19b96784b2da8406ac"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "2a47403f2ae58167c4d75973960ccc62b28cb0d8"
+  pruneopts = ""
+  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
 
 [[projects]]
+  digest = "1:5acd3512b047305d49e8763eef7ba423901e85d5dd2fd1e71778a0ea8de10bd4"
   name = "golang.org/x/text"
   packages = [
     "collate",
@@ -202,21 +239,25 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable"
+    "unicode/rangetable",
   ]
+  pruneopts = ""
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:5fc6c317675b746d0c641b29aa0aab5fcb403c0d07afdbf0de86b0d447a0502a"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/rpc/errdetails",
-    "googleapis/rpc/status"
+    "googleapis/rpc/status",
   ]
+  pruneopts = ""
   revision = "bd91e49a0898e27abb88c339b432fa53d7497ac0"
 
 [[projects]]
+  digest = "1:d141efe4aaad714e3059c340901aab3147b6253e58c85dafbcca3dd8b0e88ad6"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -252,33 +293,59 @@
     "stats",
     "status",
     "tap",
-    "test/bufconn"
+    "test/bufconn",
   ]
+  pruneopts = ""
   revision = "df014850f6dee74ba2fc94874043a9f3f75fbfd8"
   version = "v1.17.0"
 
 [[projects]]
+  digest = "1:eb53021a8aa3f599d29c7102e65026242bdedce998a54837dc67f14b6a97c5fd"
   name = "gopkg.in/fsnotify.v1"
   packages = ["."]
+  pruneopts = ""
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   source = "https://github.com/fsnotify/fsnotify/archive/v1.4.7.tar.gz"
   version = "v1.4.7"
 
 [[projects]]
   branch = "v1"
+  digest = "1:a96d16bd088460f2e0685d46c39bcf1208ba46e0a977be2df49864ec7da447dd"
   name = "gopkg.in/tomb.v1"
   packages = ["."]
+  pruneopts = ""
   revision = "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
 
 [[projects]]
+  digest = "1:cedccf16b71e86db87a24f8d4c70b0a855872eb967cb906a66b95de56aefbd0d"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = ""
   revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
   version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0afc0b508d60127d6a32330500bd3a6e54f0a31881541059e6e32ed1ab3d2164"
+  input-imports = [
+    "github.com/nalej/derrors",
+    "github.com/nalej/grpc-authx-go",
+    "github.com/nalej/grpc-common-go",
+    "github.com/nalej/grpc-organization-go",
+    "github.com/nalej/grpc-role-go",
+    "github.com/nalej/grpc-user-go",
+    "github.com/nalej/grpc-user-manager-go",
+    "github.com/nalej/grpc-utils/pkg/conversions",
+    "github.com/nalej/grpc-utils/pkg/test",
+    "github.com/nalej/grpc-utils/pkg/tools",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/gomega",
+    "github.com/rs/zerolog",
+    "github.com/rs/zerolog/log",
+    "github.com/spf13/cobra",
+    "google.golang.org/grpc",
+    "google.golang.org/grpc/reflection",
+    "google.golang.org/grpc/test/bufconn",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
