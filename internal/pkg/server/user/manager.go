@@ -185,6 +185,7 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		MemberSince:    smUser.MemberSince,
 		RoleId:         role.RoleId,
 		RoleName:       role.Name,
+		Internal: role.Internal,
 	}, nil
 }
 
