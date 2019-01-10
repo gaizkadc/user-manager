@@ -80,7 +80,7 @@ pipeline {
                 script {
                     if (env.testResult != 0) {
                         k8sLogs = new org.daisho.k8s.Logs()
-                        k8sLogs.archiveAllPodLogs(namespace)
+                        k8sLogs.archiveAllPodLogs(env.namespaceName)
                         error("Tests failed.")
                     }
                 }
