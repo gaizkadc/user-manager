@@ -11,7 +11,7 @@ pipeline {
 
     stages {
         stage("Create namespace") {
-            agent { node { label 'k8s' } }
+            agent { label 'k8s' }
             steps { container("kubectl") { 
                 script {
                     env.namespaceName = nsHelper.createRandomNamespace()
@@ -20,22 +20,21 @@ pipeline {
             } }
         }
         stage("Launch ScyllaDB deploy pipeline") {
-            agent { node { label 'k8s' } }
+            agent { label 'k8s' }
             steps { 
                 build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
             }
         }
         stage("Dependant services deployment") {
-            agent { node { label 'k8s' } }
             parallel {
                 stage("Launch system-model deploy pipeline") {
-                    agent { node { label 'k8s' } }
+                    agent { label 'k8s' }
                     steps { 
                         build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
                     }
                 }
                 stage("Launch authx deploy pipeline") {
-                    agent { node { label 'k8s' } }
+                    agent { label 'k8s' }
                     steps { 
                         build job: 'deploy/components/authx', parameters: [
                             [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
@@ -46,19 +45,19 @@ pipeline {
             }
         }
         stage("Variable initialization") {
-            agent { node { label 'golang' } }
+            agent { label 'golang' }
             steps { stepVariableInitialization packagePath }
         }
         stage("Git setup") {
-            agent { node { label 'golang' } }
+            agent { label 'golang' }
             steps { container("golang") { stepGitSetup() } }
         }
         stage("Dependency download") {
-            agent { node { label 'golang' } }
+            agent { label 'golang' }
             steps { container("golang") { stepGolangDependencyDownload packagePath } }
         }
         stage("Integration tests") {
-            agent { node { label 'golang' } }
+            agent { label 'golang' }
             steps { container("golang") {
                 script {
                     env.RUN_INTEGRATION_TEST = "true"
@@ -71,7 +70,7 @@ pipeline {
     }
     post {
         always {
-            agent { node { label 'k8s' } }
+            agent { label 'k8s' }
             container("kubectl") {
                 script {
                     nsHelper.deleteNamespace(env.namespaceName)
