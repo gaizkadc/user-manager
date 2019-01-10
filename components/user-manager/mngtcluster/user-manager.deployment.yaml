@@ -9,7 +9,7 @@ metadata:
     cluster: management
     component: user-manager
   name: user-manager
-  namespace: nalej
+  namespace: __NPH_NAMESPACE
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -25,13 +25,13 @@ spec:
     spec:
       containers:
       - name: user-manager
-        image: nalejregistry.azurecr.io/nalej/user-manager:VERSION
-        imagePullPolicy: IfNotPresent
+        image: nalejregistry.azurecr.io/nalej/user-manager:__NPH_VERSION
+        imagePullPolicy: Always
         args:
         - "run"
         - "--debug"
-        - "--systemModelAddress=system-model.nalej:8800"
-        - "--authxAddress=authx.nalej:8810"
+        - "--systemModelAddress=system-model.__NPH_NAMESPACE:8800"
+        - "--authxAddress=authx.__NPH_NAMESPACE:8810"
         securityContext:
           runAsUser: 2000
       imagePullSecrets:
