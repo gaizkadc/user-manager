@@ -10,62 +10,64 @@ pipeline {
     }
 
     stages {
-        stage("Create namespace") {
+        stage("Component deployment") {
             agent { label 'k8s' }
-            steps { container("kubectl") { 
-                script {
-                    env.namespaceName = nsHelper.createRandomNamespace()
-                    env.authxSecret = utils.randomString(32)
+            stages {
+                stage("Create namespace") {
+                    steps { container("kubectl") { 
+                        script {
+                            env.namespaceName = nsHelper.createRandomNamespace()
+                            env.authxSecret = utils.randomString(32)
+                        }
+                    } }
                 }
-            } }
-        }
-        stage("Launch ScyllaDB deploy pipeline") {
-            agent { label 'k8s' }
-            steps { 
-                build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
-            }
-        }
-        stage("Dependant services deployment") {
-            parallel {
-                stage("Launch system-model deploy pipeline") {
-                    agent { label 'k8s' }
+                stage("Launch ScyllaDB deploy pipeline") {
                     steps { 
-                        build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+                        build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
                     }
                 }
-                stage("Launch authx deploy pipeline") {
-                    agent { label 'k8s' }
-                    steps { 
-                        build job: 'deploy/components/authx', parameters: [
-                            [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
-                            [$class: 'StringParameterValue', name: 'sharedSecret', value: env.authxSecret]
-                        ]
+                stage("Dependant services deployment") {
+                    parallel {
+                        stage("Launch system-model deploy pipeline") {
+                            steps { 
+                                build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+                            }
+                        }
+                        stage("Launch authx deploy pipeline") {
+                            steps { 
+                                build job: 'deploy/components/authx', parameters: [
+                                    [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
+                                    [$class: 'StringParameterValue', name: 'sharedSecret', value: env.authxSecret]
+                                ]
+                            }
+                        }
                     }
                 }
             }
         }
-        stage("Variable initialization") {
+        stage("Run integration tests") {
             agent { label 'golang' }
-            steps { stepVariableInitialization packagePath }
-        }
-        stage("Git setup") {
-            agent { label 'golang' }
-            steps { container("golang") { stepGitSetup() } }
-        }
-        stage("Dependency download") {
-            agent { label 'golang' }
-            steps { container("golang") { stepGolangDependencyDownload packagePath } }
-        }
-        stage("Integration tests") {
-            agent { label 'golang' }
-            steps { container("golang") {
-                script {
-                    env.RUN_INTEGRATION_TEST = "true"
-                    env.IT_SM_ADDRESS = "system-model.${env.namespaceName}:8800"
-                    env.IT_AUTHX_ADDRESS = "authx.${env.namespaceName}:8810"
-                    stepGolangUnitTests packagePath
+            stages {
+                stage("Variable initialization") {
+                    steps { stepVariableInitialization packagePath }
                 }
-            } }
+                stage("Git setup") {
+                    steps { container("golang") { stepGitSetup() } }
+                }
+                stage("Dependency download") {
+                    steps { container("golang") { stepGolangDependencyDownload packagePath } }
+                }
+                stage("Integration tests") {
+                    steps { container("golang") {
+                        script {
+                            env.RUN_INTEGRATION_TEST = "true"
+                            env.IT_SM_ADDRESS = "system-model.${env.namespaceName}:8800"
+                            env.IT_AUTHX_ADDRESS = "authx.${env.namespaceName}:8810"
+                            stepGolangUnitTests packagePath
+                        }
+                    } }
+                }
+            }
         }
     }
     post {
