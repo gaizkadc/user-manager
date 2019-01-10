@@ -3,6 +3,7 @@ def utils = new org.daisho.Utils()
 
 
 pipeline {
+    agent none
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         parallelsAlwaysFailFast()
@@ -19,18 +20,22 @@ pipeline {
             } }
         }
         stage("Launch ScyllaDB deploy pipeline") {
+            agent { node { label 'k8s' } }
             steps { 
                 build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
             }
         }
         stage("Dependant services deployment") {
+            agent { node { label 'k8s' } }
             parallel {
                 stage("Launch system-model deploy pipeline") {
+                    agent { node { label 'k8s' } }
                     steps { 
                         build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
                     }
                 }
                 stage("Launch authx deploy pipeline") {
+                    agent { node { label 'k8s' } }
                     steps { 
                         build job: 'deploy/components/authx', parameters: [
                             [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
@@ -41,6 +46,7 @@ pipeline {
             }
         }
         stage("Variable initialization") {
+            agent { node { label 'golang' } }
             steps { stepVariableInitialization packagePath }
         }
         stage("Git setup") {
