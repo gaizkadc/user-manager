@@ -1,0 +1,76 @@
+def nsHelper = new org.daisho.k8s.Namespace()
+def utils = new org.daisho.Utils()
+
+
+pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        parallelsAlwaysFailFast()
+    }
+
+    stages {
+        stage("Create namespace") {
+            agent { node { label 'k8s' } }
+            steps { container("kubectl") { 
+                script {
+                    env.namespaceName = nsHelper.createRandomNamespace()
+                    env.authxSecret = utils.randomString(32)
+                }
+            } }
+        }
+        stage("Launch ScyllaDB deploy pipeline") {
+            steps { 
+                build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+            }
+        }
+        stage("Dependant services deployment") {
+            parallel {
+                stage("Launch system-model deploy pipeline") {
+                    steps { 
+                        build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+                    }
+                }
+                stage("Launch authx deploy pipeline") {
+                    steps { 
+                        build job: 'deploy/components/authx', parameters: [
+                            [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
+                            [$class: 'StringParameterValue', name: 'sharedSecret', value: env.authxSecret]
+                        ]
+                    }
+                }
+            }
+        }
+        stage("Variable initialization") {
+            steps { stepVariableInitialization packagePath }
+        }
+        stage("Git setup") {
+            agent { node { label 'golang' } }
+            steps { container("golang") { stepGitSetup() } }
+        }
+        stage("Dependency download") {
+            agent { node { label 'golang' } }
+            steps { container("golang") { stepGolangDependencyDownload packagePath } }
+        }
+        stage("Integration tests") {
+            agent { node { label 'golang' } }
+            steps { container("golang") {
+                script {
+                    env.RUN_INTEGRATION_TEST = "true"
+                    env.IT_SM_ADDRESS = "system-model.${env.namespaceName}:8800"
+                    env.IT_AUTHX_ADDRESS = "authx.${env.namespaceName}:8810"
+                    stepGolangUnitTests packagePath
+                }
+            } }
+        }
+    }
+    post {
+        always {
+            agent { node { label 'k8s' } }
+            container("kubectl") {
+                script {
+                    nsHelper.deleteNamespace(env.namespaceName)
+                }
+            }
+        }
+    }
+}
