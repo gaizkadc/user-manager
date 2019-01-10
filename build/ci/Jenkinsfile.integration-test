@@ -1,3 +1,5 @@
+@Library('nalej-helpers@feature/read-pod-logs')
+
 def nsHelper = new org.daisho.k8s.Namespace()
 def utils = new org.daisho.Utils()
 
@@ -66,9 +68,21 @@ pipeline {
                             env.RUN_INTEGRATION_TEST = "true"
                             env.IT_SM_ADDRESS = "system-model.${env.namespaceName}:8800"
                             env.IT_AUTHX_ADDRESS = "authx.${env.namespaceName}:8810"
-                            stepGolangUnitTests packagePath
+                            env.testResult = stepGolangIntegrationTests packagePath env.namespaceName
                         }
                     } }
+                }
+            }
+        }
+        stage("Evaluate test results") {
+            agent { label 'k8s' }
+            steps {
+                script {
+                    if (env.testResult != 0) {
+                        k8sLogs = new org.daisho.k8s.Logs()
+                        k8sLogs.archiveAllPodLogs(namespace)
+                        error("Tests failed.")
+                    }
                 }
             }
         }
