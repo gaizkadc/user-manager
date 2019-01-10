@@ -76,7 +76,7 @@ pipeline {
         }
         stage("Evaluate test results") {
             agent { label 'k8s' }
-            steps {
+            steps { container("kubectl") {
                 script {
                     if (env.testResult != 0) {
                         k8sLogs = new org.daisho.k8s.Logs()
@@ -84,7 +84,7 @@ pipeline {
                         error("Tests failed.")
                     }
                 }
-            }
+            } }
         }
     }
     post {
