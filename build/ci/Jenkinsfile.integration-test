@@ -1,5 +1,3 @@
-@Library('nalej-helpers@feature/read-pod-logs')
-
 def nsHelper = new org.daisho.k8s.Namespace()
 def utils = new org.daisho.Utils()
 
