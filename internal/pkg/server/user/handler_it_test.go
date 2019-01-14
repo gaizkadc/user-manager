@@ -123,9 +123,7 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(err).Should(gomega.Succeed())
 		client = grpc_user_manager_go.NewUserManagerClient(conn)
 		rand.Seed(ginkgo.GinkgoRandomSeed())
-
-		targetOrganization = CreateOrganization("app-manager-it", orgClient)
-		targetRole = CreateRole("test", targetOrganization.OrganizationId, roleClient, authxClient)
+		
 
 	})
 
@@ -134,7 +132,7 @@ var _ = ginkgo.Describe("User service", func() {
 		listener.Close()
 	})
 
-	/*
+
 	ginkgo.BeforeEach(func() {
 
 		ginkgo.By("creating target entities", func() {
@@ -143,7 +141,7 @@ var _ = ginkgo.Describe("User service", func() {
 			targetRole = CreateRole("test", targetOrganization.OrganizationId, roleClient, authxClient)
 		})
 	})
-*/
+
 
 	ginkgo.It("should be able to add a new user", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
@@ -183,7 +181,7 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(retrieved.Email).Should(gomega.Equal(added.Email))
 	})
 
-	ginkgo.FIt("should be able to list the users in an organizationID", func() {
+	ginkgo.It("should be able to list the users in an organizationID", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId: targetOrganization.OrganizationId,
 			Email:          GetRandomEmail(),
