@@ -108,12 +108,14 @@ yaml:
 		if [ -d components/"$$app"/appcluster ]; then \
 			mkdir -p $(TARGET)/yaml/appcluster ; \
 			cp components/"$$app"/appcluster/*.yaml $(TARGET)/yaml/appcluster/. ; \
-			cd $(TARGET)/yaml/appcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/VERSION/$(VERSION)/g' && cd - ; \
+			cd $(TARGET)/yaml/appcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/__NPH_VERSION/$(VERSION)/g' && cd - ; \
+			cd $(TARGET)/yaml/appcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/__NPH_NAMESPACE/nalej/g' && cd - ; \
 		fi ; \
 		if [ -d components/"$$app"/mngtcluster ]; then \
 			mkdir -p $(TARGET)/yaml/mngtcluster ; \
 			cp components/"$$app"/mngtcluster/*.yaml $(TARGET)/yaml/mngtcluster/. ; \
-			cd $(TARGET)/yaml/mngtcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/VERSION/$(VERSION)/g' && cd - ; \
+			cd $(TARGET)/yaml/mngtcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/__NPH_VERSION/$(VERSION)/g' && cd - ; \
+			cd $(TARGET)/yaml/mngtcluster && find . -type f -name '*.yaml' | xargs sed -i '' 's/__NPH_NAMESPACE/nalej/g' && cd - ; \
 		fi ; \
 	done
 
