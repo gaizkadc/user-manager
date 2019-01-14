@@ -123,6 +123,8 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(err).Should(gomega.Succeed())
 		client = grpc_user_manager_go.NewUserManagerClient(conn)
 		rand.Seed(ginkgo.GinkgoRandomSeed())
+		
+
 	})
 
 	ginkgo.AfterSuite(func() {
@@ -130,13 +132,16 @@ var _ = ginkgo.Describe("User service", func() {
 		listener.Close()
 	})
 
+
 	ginkgo.BeforeEach(func() {
+
 		ginkgo.By("creating target entities", func() {
 			// Initial data
 			targetOrganization = CreateOrganization("app-manager-it", orgClient)
 			targetRole = CreateRole("test", targetOrganization.OrganizationId, roleClient, authxClient)
 		})
 	})
+
 
 	ginkgo.It("should be able to add a new user", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
@@ -231,6 +236,7 @@ var _ = ginkgo.Describe("User service", func() {
 			Email:    added.Email,
 			Password:    toAdd.Password,
 			NewPassword: "newPassword",
+			OrganizationId: targetOrganization.OrganizationId,
 		}
 		success, err := client.ChangePassword(context.Background(), changeRequest)
 		gomega.Expect(err).To(gomega.Succeed())
