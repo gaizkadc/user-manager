@@ -148,7 +148,7 @@ func (h *Handler) ChangePassword(ctx context.Context, request *grpc_user_manager
 	}
 	cErr := h.Manager.ChangePassword(request)
 	if cErr != nil {
-		return nil, err
+		return nil, cErr
 	}
 	return &grpc_common_go.Success{}, nil
 }

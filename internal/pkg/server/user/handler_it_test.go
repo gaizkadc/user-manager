@@ -243,6 +243,27 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(success).ShouldNot(gomega.BeNil())
 	})
 
+	ginkgo.It("should not be able to change the password of a user", func() {
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         targetRole.RoleId,
+		}
+		added, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		changeRequest := &grpc_user_manager_go.ChangePasswordRequest{
+			Email:    added.Email,
+			Password:    "WrongPassword",
+			NewPassword: "newPassword",
+			OrganizationId: targetOrganization.OrganizationId,
+		}
+		_, err = client.ChangePassword(context.Background(), changeRequest)
+		gomega.Expect(err).NotTo(gomega.Succeed())
+	})
+
 	ginkgo.It("should be able to add a new role", func() {
 		primitives := make([]grpc_authx_go.AccessPrimitive, 0)
 		primitives = append(primitives, grpc_authx_go.AccessPrimitive_ORG)
