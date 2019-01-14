@@ -1,0 +1,59 @@
+def nsHelper = new org.daisho.k8s.Namespace()
+def utils = new org.daisho.Utils()
+
+
+pipeline {
+    agent { node { label 'k8s' } }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        parallelsAlwaysFailFast()
+    }
+
+    stages {
+        stage("Create namespace") {
+            steps { container("kubectl") { 
+                script {
+                    env.namespaceName = nsHelper.createRandomNamespace()
+                    env.authxSecret = utils.randomString(32)
+                }
+            } }
+        }
+        stage("Launch ScyllaDB deploy pipeline") {
+            steps { 
+                build job: 'deploy/components/scylladb', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+            }
+        }
+        stage("Dependant services deployment") {
+            parallel {
+                stage("Launch system-model deploy pipeline") {
+                    steps { 
+                        build job: 'deploy/components/system-model', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+                    }
+                }
+                stage("Launch authx deploy pipeline") {
+                    steps { 
+                        build job: 'deploy/components/authx', parameters: [
+                            [$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName],
+                            [$class: 'StringParameterValue', name: 'sharedSecret', value: env.authxSecret]
+                        ]
+                    }
+                }
+            }
+        }
+        stage("Launch user-manager deploy pipeline") {
+            steps { 
+                build job: 'deploy/components/user-manager', parameters: [[$class: 'StringParameterValue', name: 'namespace', value: env.namespaceName]]
+            }
+        }
+        
+    }
+    post {
+        always {
+            container("kubectl") {
+                script {
+                    nsHelper.deleteNamespace(env.namespaceName)
+                }
+            }
+        }
+    }
+}
