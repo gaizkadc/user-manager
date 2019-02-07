@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: user-manager
-        image: nalejregistry.azurecr.io/nalej/user-manager:__NPH_VERSION
+        image: __NPH_REGISTRY.azurecr.io/__NPH_REGISTRY_NAMESPACE/user-manager:__NPH_VERSION
         imagePullPolicy: Always
         args:
         - "run"
