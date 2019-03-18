@@ -6,12 +6,14 @@ package user
 
 import (
 	"context"
+	"github.com/nalej/derrors"
 	"github.com/nalej/grpc-authx-go"
 	"github.com/nalej/grpc-common-go"
 	"github.com/nalej/grpc-organization-go"
 	"github.com/nalej/grpc-role-go"
 	"github.com/nalej/grpc-user-go"
 	"github.com/nalej/grpc-user-manager-go"
+	"github.com/nalej/grpc-utils/pkg/conversions"
 	"github.com/nalej/user-manager/internal/pkg/entities"
 )
 
@@ -20,6 +22,8 @@ type Manager struct {
 	accessClient grpc_authx_go.AuthxClient
 	usersClient  grpc_user_go.UsersClient
 	roleClient   grpc_role_go.RolesClient
+
+	usersCache UsersCache
 }
 
 // NewManager creates a Manager using a set of clients.
@@ -28,11 +32,16 @@ func NewManager(
 	usersClient grpc_user_go.UsersClient,
 	roleClient grpc_role_go.RolesClient,
 ) Manager {
-	return Manager{accessClient, usersClient, roleClient}
+	return Manager{accessClient:accessClient, usersClient: usersClient, roleClient: roleClient,
+		usersCache:NewUsersCache(accessClient, usersClient, roleClient)}
 }
 
 // AddUser adds a new user to an organization.
 func (m *Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (*grpc_user_manager_go.User, error) {
+
+	// clear userCache
+	m.usersCache.Clear(addUserRequest.OrganizationId)
+
 	addRequest := &grpc_user_go.AddUserRequest{
 		OrganizationId: addUserRequest.OrganizationId,
 		Email:          addUserRequest.Email,
@@ -64,6 +73,10 @@ func (m *Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (
 
 // RemoveUser removes a given user from the system.
 func (m *Manager) RemoveUser(userID *grpc_user_go.UserId) error {
+
+	// clear userCache
+	m.usersCache.Clear(userID.OrganizationId)
+
 	// 1. Remove user from authx
 	deleteCredentialsRequest := &grpc_authx_go.DeleteCredentialsRequest{
 		Username: userID.Email,
@@ -115,6 +128,10 @@ func (m *Manager) ChangePassword(request *grpc_user_manager_go.ChangePasswordReq
 
 // AddRole adds a new role to an organization.
 func (m *Manager) AddRole(addRoleRequest *grpc_user_manager_go.AddRoleRequest) (*grpc_authx_go.Role, error) {
+
+	// clear userCache
+	m.usersCache.Clear(addRoleRequest.OrganizationId)
+
 	// 1. Add the role to the organization in SM
 	addRequest := &grpc_role_go.AddRoleRequest{
 		OrganizationId: addRoleRequest.OrganizationId,
@@ -151,14 +168,26 @@ func (m *Manager) RemoveRole(roleID *grpc_authx_go.RoleId) error {
 
 // AssignRole assigns a role to an existing user.
 func (m *Manager) AssignRole(assignRoleRequest *grpc_user_manager_go.AssignRoleRequest) (*grpc_user_manager_go.User, error) {
+
+	canAssign, err := m.usersCache.CanAssignRole(assignRoleRequest)
+	if err != nil {
+		return nil, conversions.ToGRPCError(err)
+	}
+	if ! canAssign {
+		return nil, conversions.ToDerror(derrors.NewInvalidArgumentError("..."))
+	}
+
+	// clear userCache
+	m.usersCache.Clear(assignRoleRequest.OrganizationId)
+
 	// 1. Update on authx
 	editRequest := &grpc_authx_go.EditUserRoleRequest{
 		Username:  assignRoleRequest.Email,
 		NewRoleId: assignRoleRequest.RoleId,
 	}
-	_, err := m.accessClient.EditUserRole(context.Background(), editRequest)
-	if err != nil {
-		return nil, err
+	_, eErr := m.accessClient.EditUserRole(context.Background(), editRequest)
+	if eErr != nil {
+		return nil, eErr
 	}
 	userID := &grpc_user_go.UserId{
 		OrganizationId: assignRoleRequest.OrganizationId,
