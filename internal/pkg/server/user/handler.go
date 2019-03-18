@@ -61,7 +61,7 @@ func (h *Handler) RemoveUser(ctx context.Context, userID *grpc_user_go.UserId) (
 	}
 	rErr := h.Manager.RemoveUser(userID)
 	if rErr != nil {
-		return nil, conversions.ToGRPCError(err)
+		return nil, rErr
 	}
 	return &grpc_common_go.Success{}, nil
 }

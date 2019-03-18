@@ -223,6 +223,38 @@ var _ = ginkgo.Describe("User service", func() {
 	})
 
 	ginkgo.It("should be able to remove a user", func() {
+		// owner user (ORG user must exist in the system)
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         targetRole.RoleId,
+		}
+		added, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		newRole := CreateResourcesRole("newResourceTestRole", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		toAdd2 := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         newRole.RoleId,
+		}
+		added2, err := client.AddUser(context.Background(), toAdd2)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		userID := &grpc_user_go.UserId{
+			OrganizationId: added.OrganizationId,
+			Email:          added2.Email,
+		}
+		success, err := client.RemoveUser(context.Background(), userID)
+		gomega.Expect(err).To(gomega.Succeed())
+		gomega.Expect(success).NotTo(gomega.BeNil())
+	})
+	ginkgo.It("should not be able to remove a user (last ORG user in the system)", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId: targetOrganization.OrganizationId,
 			Email:          GetRandomEmail(),
@@ -237,9 +269,8 @@ var _ = ginkgo.Describe("User service", func() {
 			OrganizationId: added.OrganizationId,
 			Email:          added.Email,
 		}
-		success, err := client.RemoveUser(context.Background(), userID)
-		gomega.Expect(err).To(gomega.Succeed())
-		gomega.Expect(success).ShouldNot(gomega.BeNil())
+		_, err = client.RemoveUser(context.Background(), userID)
+		gomega.Expect(err).NotTo(gomega.Succeed())
 	})
 
 	ginkgo.It("should be able to change the password of a user", func() {

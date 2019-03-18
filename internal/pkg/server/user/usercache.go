@@ -42,6 +42,30 @@ func (uc * UsersCache) Clear (organizationID string) derrors.Error {
 	return nil
 }
 
+// check if thr removeUser operaton can be done
+// 1.- If the user Role is not ORG -> the operation can be done
+// 2.- If the user Role is ORG:
+// 2.1.- If there are more ORG users -> the operation can be done
+// 2.2.- If there are not more ORG users -> the operation cannot be done
+func (uc * UsersCache) CanRemoveUser (userID *grpc_user_go.UserId)(bool, derrors.Error) {
+
+	isOwner, err := uc.userIsOwner(userID.OrganizationId, userID.Email)
+	if err != nil {
+		return false, err
+	}
+	if isOwner {
+		hasMoreOwner, err := uc.hasMoreOwner(userID.OrganizationId, userID.Email)
+		if err != nil {
+			return false, err
+		}
+		if ! hasMoreOwner {
+			return false, nil
+		}
+	}
+	return true, nil
+
+}
+
 // check if the assignRole operation can be done.
 // If new Role is ORG -> nothing to check
 // If new Role is not ORG:
@@ -68,7 +92,7 @@ func (uc * UsersCache) CanAssignRole(assignRoleRequest *grpc_user_manager_go.Ass
 				return false, err
 			}
 			if ! hasMoreOwner {
-				return false, derrors.NewInvalidArgumentError(fmt.Sprintf("can not assign role, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG))
+				return false, nil
 			}
 		}
 	}

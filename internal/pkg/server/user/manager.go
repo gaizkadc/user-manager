@@ -6,6 +6,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/nalej/derrors"
 	"github.com/nalej/grpc-authx-go"
 	"github.com/nalej/grpc-common-go"
@@ -74,6 +75,14 @@ func (m *Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (
 // RemoveUser removes a given user from the system.
 func (m *Manager) RemoveUser(userID *grpc_user_go.UserId) error {
 
+	// check if the operation can be done
+	canRemove, vErr := m.usersCache.CanRemoveUser(userID)
+	if vErr != nil {
+		return conversions.ToGRPCError(vErr)
+	}
+	if ! canRemove {
+		return derrors.NewInvalidArgumentError(fmt.Sprintf("can not remove user, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG))
+	}
 	// clear userCache
 	m.usersCache.Clear(userID.OrganizationId)
 
@@ -174,7 +183,7 @@ func (m *Manager) AssignRole(assignRoleRequest *grpc_user_manager_go.AssignRoleR
 		return nil, conversions.ToGRPCError(err)
 	}
 	if ! canAssign {
-		return nil, conversions.ToDerror(derrors.NewInvalidArgumentError("..."))
+		return nil, conversions.ToDerror(derrors.NewInvalidArgumentError(fmt.Sprintf("can not assign role, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG)))
 	}
 
 	// clear userCache
