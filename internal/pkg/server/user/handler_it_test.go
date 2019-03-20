@@ -62,6 +62,28 @@ func CreateRole(name string, organizationID string,
 	return added
 }
 
+func CreateResourcesRole(name string, organizationID string,
+	roleClient grpc_role_go.RolesClient, accessClient grpc_authx_go.AuthxClient) *grpc_role_go.Role {
+	toAdd := &grpc_role_go.AddRoleRequest{
+		OrganizationId: organizationID,
+		Name:           name,
+		Description:    "user-manager-it(resource)",
+	}
+	added, err := roleClient.AddRole(context.Background(), toAdd)
+	gomega.Expect(err).To(gomega.Succeed())
+	gomega.Expect(added).ToNot(gomega.BeNil())
+
+	accessRoleRequest := &grpc_authx_go.Role{
+		OrganizationId: organizationID,
+		RoleId:         added.RoleId,
+		Name:           added.Name,
+		Primitives:     []grpc_authx_go.AccessPrimitive{grpc_authx_go.AccessPrimitive_RESOURCES},
+	}
+	_, err = accessClient.AddRole(context.Background(), accessRoleRequest)
+	gomega.Expect(err).To(gomega.Succeed())
+	return added
+}
+
 func GetRandomEmail() string {
 	return fmt.Sprintf("random-%d@mail.com", rand.Int())
 }
@@ -142,7 +164,6 @@ var _ = ginkgo.Describe("User service", func() {
 		})
 	})
 
-
 	ginkgo.It("should be able to add a new user", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId: targetOrganization.OrganizationId,
@@ -202,6 +223,38 @@ var _ = ginkgo.Describe("User service", func() {
 	})
 
 	ginkgo.It("should be able to remove a user", func() {
+		// owner user (ORG user must exist in the system)
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         targetRole.RoleId,
+		}
+		added, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		newRole := CreateResourcesRole("newResourceTestRole", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		toAdd2 := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         newRole.RoleId,
+		}
+		added2, err := client.AddUser(context.Background(), toAdd2)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		userID := &grpc_user_go.UserId{
+			OrganizationId: added.OrganizationId,
+			Email:          added2.Email,
+		}
+		success, err := client.RemoveUser(context.Background(), userID)
+		gomega.Expect(err).To(gomega.Succeed())
+		gomega.Expect(success).NotTo(gomega.BeNil())
+	})
+	ginkgo.It("should not be able to remove a user (last ORG user in the system)", func() {
 		toAdd := &grpc_user_manager_go.AddUserRequest{
 			OrganizationId: targetOrganization.OrganizationId,
 			Email:          GetRandomEmail(),
@@ -216,9 +269,8 @@ var _ = ginkgo.Describe("User service", func() {
 			OrganizationId: added.OrganizationId,
 			Email:          added.Email,
 		}
-		success, err := client.RemoveUser(context.Background(), userID)
-		gomega.Expect(err).To(gomega.Succeed())
-		gomega.Expect(success).ShouldNot(gomega.BeNil())
+		_, err = client.RemoveUser(context.Background(), userID)
+		gomega.Expect(err).NotTo(gomega.Succeed())
 	})
 
 	ginkgo.It("should be able to change the password of a user", func() {
@@ -306,6 +358,93 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(retrieved.Email).Should(gomega.Equal(user.Email))
 		gomega.Expect(retrieved.RoleId).Should(gomega.Equal(newRole.RoleId))
 	})
+	ginkgo.It("should NOT be able to assign a role to an existing user (no more ORG users in the system)", func() {
+		// Add the user
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user",
+			RoleId:         targetRole.RoleId,
+		}
+		user, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+		// Create the new role
+		newRole := CreateResourcesRole("newResourceTestRole", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		// Assign role
+		assignRoleRequest := &grpc_user_manager_go.AssignRoleRequest{
+			OrganizationId: user.OrganizationId,
+			Email:          user.Email,
+			RoleId:         newRole.RoleId,
+		}
+		_, err = client.AssignRole(context.Background(), assignRoleRequest)
+		// Check role
+		gomega.Expect(err).NotTo(gomega.Succeed())
+	})
+	ginkgo.It("should be able to assign a role to an existing user (more ORG users in the system)", func() {
+		// Add the user
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user1",
+			RoleId:         targetRole.RoleId,
+		}
+		user, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		// Create the new role and add new user
+		newOrgRole := CreateRole("orgRole2", targetOrganization.OrganizationId, roleClient, authxClient)
+		toAdd2 := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user2",
+			RoleId:         newOrgRole.RoleId,
+		}
+		_, err = client.AddUser(context.Background(), toAdd2)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		newRole := CreateResourcesRole("newResourceTestRole", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		// Assign role
+		assignRoleRequest := &grpc_user_manager_go.AssignRoleRequest{
+			OrganizationId: user.OrganizationId,
+			Email:          user.Email,
+			RoleId:         newRole.RoleId,
+		}
+		_, err = client.AssignRole(context.Background(), assignRoleRequest)
+		// Check role
+		gomega.Expect(err).To(gomega.Succeed())
+	})
+	ginkgo.It("should be able to assign a role to an existing user (it wasn't ORG user)", func() {
+		// Add the user
+		newRole := CreateResourcesRole("newResourceTestRole", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		toAdd := &grpc_user_manager_go.AddUserRequest{
+			OrganizationId: targetOrganization.OrganizationId,
+			Email:          GetRandomEmail(),
+			Password:       "password",
+			Name:           "user1",
+			RoleId:         newRole.RoleId,
+		}
+		user, err := client.AddUser(context.Background(), toAdd)
+		gomega.Expect(err).To(gomega.Succeed())
+
+		// Create the new role and add new user
+		newOrgRole := CreateRole("orgRole2", targetOrganization.OrganizationId, roleClient, authxClient)
+
+		// Assign role
+		assignRoleRequest := &grpc_user_manager_go.AssignRoleRequest{
+			OrganizationId: user.OrganizationId,
+			Email:          user.Email,
+			RoleId:         newOrgRole.RoleId,
+		}
+		_, err = client.AssignRole(context.Background(), assignRoleRequest)
+		// Check role
+		gomega.Expect(err).To(gomega.Succeed())
+	})
 
 	ginkgo.It("should be able to list the roles in an organization", func() {
 		organizationID := &grpc_organization_go.OrganizationId{
@@ -316,4 +455,30 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(len(roles.Roles)).Should(gomega.Equal(1))
 	})
 
+	ginkgo.Context("userCache tests", func() {
+		ginkgo.It("should be able to add an organization Roles", func(){
+
+			toAdd := &grpc_user_manager_go.AddUserRequest{
+				OrganizationId: targetOrganization.OrganizationId,
+				Email:          GetRandomEmail(),
+				Password:       "password",
+				Name:           "user",
+				RoleId:         targetRole.RoleId,
+			}
+			added, err := client.AddUser(context.Background(), toAdd)
+			gomega.Expect(err).To(gomega.Succeed())
+			gomega.Expect(added.Email).ShouldNot(gomega.BeEmpty())
+
+			userCache := NewUsersCache(authxClient, userClient, roleClient)
+			isOwner, err := userCache.roleIsOwner(targetOrganization.OrganizationId, targetRole.RoleId)
+			gomega.Expect(err).To(gomega.Succeed())
+			gomega.Expect(isOwner).To(gomega.BeTrue())
+
+			isOwner, err = userCache.roleIsOwner(targetOrganization.OrganizationId, "WrongID")
+			gomega.Expect(err).To(gomega.Succeed())
+			gomega.Expect(isOwner).NotTo(gomega.BeTrue())
+
+
+		})
+	})
 })
