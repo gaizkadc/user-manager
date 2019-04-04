@@ -5,7 +5,6 @@ variables:
   - group: common-vars
   - group: slack-webhooks
   - group: docker-registries
-  - group: testing-placeholders
   - name: componentList
     value: "user-manager"
   - name: namespace
@@ -14,22 +13,12 @@ variables:
     value: $(Agent.TempDirectory)/ci_kubeconfig.yaml
   - name: authorName
     value: ""
-  - name: authxSecret
-    value: "this-is-my-little-secret"
 
 resources:
   repositories:
     - repository: ci_templates
       type: github
       name: nalej/ci-templates
-      endpoint: nalej
-    - repository: scylla_deploy
-      type: github
-      name: nalej/scylla-deploy
-      endpoint: nalej
-    - repository: system_model
-      type: github
-      name: nalej/system-model
       endpoint: nalej
 
 jobs:
@@ -60,24 +49,10 @@ jobs:
       yamlIdentifier: testing
       yamlPath: dist/yaml/$(stagingDockerRegistry)
 
-  # - template: ci/templates/download_artifact.yaml@scylla_deploy
-  #   parameters:
-  #     downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
-
-  # - template: ci/templates/download_artifact.yaml@system_model
-  #   parameters:
-  #     downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
-
   - template: k8s/yaml/namespace.yaml@ci_templates
     parameters:
       namespace: $(namespace)
       yamlPath: dist/yaml/$(stagingDockerRegistry)
-  
-  # - template: placeholders/replace_secrets.yaml@ci_templates
-  #   parameters:
-  #     yamlPath: dist/yaml/$(stagingDockerRegistry)
-  #     placeholders: "$(placeholderAuthxSecret)"
-  #     values: "$(authxSecret)"
   
   - task: DownloadSecureFile@1
     inputs:
@@ -94,12 +69,7 @@ jobs:
       kubeconfig: $(kubeconfig)
       platform: mngtcluster
       dockerRegistry: $(stagingDockerRegistry)
-  
-  # - template: ci/templates/verify_deploy.yaml@scylla_deploy
-  #   parameters:
-  #     kubeconfig: $(kubeconfig)
-  #     namespace: $(namespace)
-  
+    
   - template: templates/verify_deploy.yaml
     parameters:
       kubeconfig: $(kubeconfig)
