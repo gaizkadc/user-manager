@@ -25,6 +25,12 @@ variables:
     value: ""
   - name: authxSecret
     value: "this-is-my-little-secret"
+  - name: RUN_INTEGRATION_TEST
+    value: "true"
+  - name: IT_SM_ADDRESS
+    value: "system-model.$(namespace):8800"
+  - name: IT_AUTHX_ADDRESS
+    value: "authx.$(namespace):8810"
 
 resources:
   repositories:
@@ -133,12 +139,6 @@ jobs:
       sshHostName: $(hostName)
       sshPublicKey: $(sshPublicKey)
       modulePath: $(modulePath)
-
-  - script: |
-      export RUN_INTEGRATION_TEST=true
-      export IT_SM_ADDRESS=system-model.$(namespace):8800
-      export IT_AUTHX_ADDRESS=authx.$(namespace):8810
-    displayName: Set integration tests environment variables
   
   - template: go/test.yaml@ci_templates
     parameters:
