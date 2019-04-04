@@ -111,6 +111,7 @@ jobs:
       kubeconfig: $(kubeconfig)
       platform: mngtcluster
       dockerRegistry: $(stagingDockerRegistry)
+      yamlPath: $(modulePath)/dist/yaml
   
   - template: ci/templates/verify_deploy.yaml@scylla_deploy
     parameters:
