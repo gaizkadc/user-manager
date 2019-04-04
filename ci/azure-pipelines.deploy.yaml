@@ -60,24 +60,24 @@ jobs:
       yamlIdentifier: testing
       yamlPath: dist/yaml/$(stagingDockerRegistry)
 
-  - template: ci/templates/download_artifact.yaml@scylla_deploy
-    parameters:
-      downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
+  # - template: ci/templates/download_artifact.yaml@scylla_deploy
+  #   parameters:
+  #     downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
 
-  - template: ci/templates/download_artifact.yaml@system_model
-    parameters:
-      downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
+  # - template: ci/templates/download_artifact.yaml@system_model
+  #   parameters:
+  #     downloadPath: $(system.defaultWorkingDirectory)/dist/yaml/$(stagingDockerRegistry)
 
   - template: k8s/yaml/namespace.yaml@ci_templates
     parameters:
       namespace: $(namespace)
       yamlPath: dist/yaml/$(stagingDockerRegistry)
   
-  - template: placeholders/replace_secrets.yaml@ci_templates
-    parameters:
-      yamlPath: dist/yaml/$(stagingDockerRegistry)
-      placeholders: "$(placeholderAuthxSecret)"
-      values: "$(authxSecret)"
+  # - template: placeholders/replace_secrets.yaml@ci_templates
+  #   parameters:
+  #     yamlPath: dist/yaml/$(stagingDockerRegistry)
+  #     placeholders: "$(placeholderAuthxSecret)"
+  #     values: "$(authxSecret)"
   
   - task: DownloadSecureFile@1
     inputs:
@@ -95,10 +95,10 @@ jobs:
       platform: mngtcluster
       dockerRegistry: $(stagingDockerRegistry)
   
-  - template: ci/templates/verify_deploy.yaml@scylla_deploy
-    parameters:
-      kubeconfig: $(kubeconfig)
-      namespace: $(namespace)
+  # - template: ci/templates/verify_deploy.yaml@scylla_deploy
+  #   parameters:
+  #     kubeconfig: $(kubeconfig)
+  #     namespace: $(namespace)
   
   - template: templates/verify_deploy.yaml
     parameters:
