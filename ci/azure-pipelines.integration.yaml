@@ -139,10 +139,15 @@ jobs:
       sshHostName: $(hostName)
       sshPublicKey: $(sshPublicKey)
       modulePath: $(modulePath)
+
+  - script: |
+      export
+      go test -v ./...
+    workingDirectory: $(modulePath)
   
-  - template: go/test.yaml@ci_templates
-    parameters:
-      modulePath: $(modulePath)
+  # - template: go/test.yaml@ci_templates
+  #   parameters:
+  #     modulePath: $(modulePath)
 
   - template: k8s/ns/delete.yaml@ci_templates
     parameters:
