@@ -136,8 +136,8 @@ jobs:
 
   - script: |
       export RUN_INTEGRATION_TEST=true
-      IT_SM_ADDRESS=system-model.$(namespace):8800
-      IT_AUTHX_ADDRESS=authx.$(namespace):8810
+      export IT_SM_ADDRESS=system-model.$(namespace):8800
+      export IT_AUTHX_ADDRESS=authx.$(namespace):8810
     displayName: Set integration tests environment variables
   
   - template: go/test.yaml@ci_templates
