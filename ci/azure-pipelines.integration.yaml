@@ -1,0 +1,173 @@
+trigger: none
+pr: none
+
+variables:
+  - group: common-vars
+  - group: slack-webhooks
+  - group: docker-registries
+  - group: testing-placeholders
+  - group: ssh-credentials
+  - name: GOBIN
+    value: '$(GOPATH)/bin'
+  - name: GOROOT
+    value: '/usr/local/go1.11'
+  - name: GOPATH
+    value: '$(system.defaultWorkingDirectory)/gopath'
+  - name: modulePath
+    value: '$(GOPATH)/src/github.com/$(Build.Repository.Name)'
+  - name: componentList
+    value: "user-manager"
+  - name: namespace
+    value: $(Build.SourceVersion)-$(Build.BuildId)
+  - name: kubeconfig
+    value: $(Agent.TempDirectory)/ci_kubeconfig.yaml
+  - name: authorName
+    value: ""
+  - name: authxSecret
+    value: "this-is-my-little-secret"
+  - name: RUN_INTEGRATION_TEST
+    value: "true"
+  - name: IT_SM_ADDRESS
+    value: "system-model.$(namespace):8800"
+  - name: IT_AUTHX_ADDRESS
+    value: "authx.$(namespace):8810"
+
+resources:
+  repositories:
+    - repository: ci_templates
+      type: github
+      name: nalej/ci-templates
+      endpoint: nalej
+    - repository: scylla_deploy
+      type: github
+      name: nalej/scylla-deploy
+      endpoint: nalej
+    - repository: system_model
+      type: github
+      name: nalej/system-model
+      endpoint: nalej
+    - repository: authx
+      type: github
+      name: nalej/authx
+      endpoint: nalej
+
+jobs:
+- job: DeployComponent
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  
+  steps:
+  - template: misc/variables.yaml@ci_templates
+
+  - template: slack/build/start.yaml@ci_templates
+    parameters:
+      author: $(authorName)
+      repository: $(Build.Repository.Name)
+      branch: $(Build.SourceBranch)
+      commit: $(Build.SourceVersionMessage)
+      buildUrl: $(buildUrl)$(Build.BuildId)
+      slackWebhook: $(slackBuilds)
+
+  - script: |
+      mkdir -p '$(GOBIN)'
+      mkdir -p '$(GOPATH)/pkg'
+      mkdir -p '$(modulePath)'
+      shopt -s extglob
+      shopt -s dotglob
+      mv !(gopath) '$(modulePath)'
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
+    displayName: 'Set up the Go workspace'
+
+  - template: ci/templates/download_artifact.yaml@scylla_deploy
+    parameters:
+      downloadPath: $(modulePath)/dist/yaml/$(stagingDockerRegistry)
+
+  - template: ci/templates/download_artifact.yaml@system_model
+    parameters:
+      downloadPath: $(modulePath)/dist/yaml/$(stagingDockerRegistry)
+
+  - template: ci/templates/download_artifact.yaml@authx
+    parameters:
+      downloadPath: $(modulePath)/dist/yaml/$(stagingDockerRegistry)
+
+  - template: k8s/yaml/namespace.yaml@ci_templates
+    parameters:
+      namespace: $(namespace)
+      yamlPath: $(modulePath)/dist/yaml/$(stagingDockerRegistry)
+  
+  - template: placeholders/replace_secrets.yaml@ci_templates
+    parameters:
+      yamlPath: $(modulePath)/dist/yaml/$(stagingDockerRegistry)
+      placeholders: "$(placeholderAuthxSecret)"
+      values: "$(authxSecret)"
+  
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: ci_kubeconfig.yaml
+    displayName: "Get K8S configuration file"
+  
+  - template: k8s/ns/create.yaml@ci_templates
+    parameters:
+      kubeconfig: $(kubeconfig)
+      namespace: $(namespace)
+
+  - template: k8s/resources/create.yaml@ci_templates
+    parameters:
+      kubeconfig: $(kubeconfig)
+      platform: mngtcluster
+      dockerRegistry: $(stagingDockerRegistry)
+      yamlPath: $(modulePath)/dist/yaml
+  
+  - template: ci/templates/verify_deploy.yaml@scylla_deploy
+    parameters:
+      kubeconfig: $(kubeconfig)
+      namespace: $(namespace)
+  
+  - template: ci/templates/verify_deploy.yaml@system_model
+    parameters:
+      kubeconfig: $(kubeconfig)
+      namespace: $(namespace)
+
+  - template: ci/templates/verify_deploy.yaml@authx
+    parameters:
+      kubeconfig: $(kubeconfig)
+      namespace: $(namespace)
+
+  - template: go/dep.yaml@ci_templates
+    parameters:
+      sshHostName: $(hostName)
+      sshPublicKey: $(sshPublicKey)
+      modulePath: $(modulePath)
+
+  - script: |
+      export
+      go test -v ./...
+    workingDirectory: $(modulePath)
+  
+  # - template: go/test.yaml@ci_templates
+  #   parameters:
+  #     modulePath: $(modulePath)
+
+  - template: k8s/ns/delete.yaml@ci_templates
+    parameters:
+      kubeconfig: $(kubeconfig)
+      namespace: $(namespace)
+
+  - template: slack/build/finish.yaml@ci_templates
+    parameters:
+      author: $(authorName)
+      repository: $(Build.Repository.Name)
+      branch: $(Build.SourceBranch)
+      commit: $(Build.SourceVersionMessage)
+      buildUrl: $(buildUrl)$(Build.BuildId)
+      slackWebhook: $(slackBuilds)
+  
+  - template: slack/build/failed.yaml@ci_templates
+    parameters:
+      author: $(authorName)
+      repository: $(Build.Repository.Name)
+      branch: $(Build.SourceBranch)
+      commit: $(Build.SourceVersionMessage)
+      buildUrl: $(buildUrl)$(Build.BuildId)
+      slackWebhook: $(slackCIFailed)
