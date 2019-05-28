@@ -1,11 +1,11 @@
 {
-    "language": "golang",
-    "application_list": [
-        "user-manager"
-    ],
-    "tools": [
-        "azure",
-        "docker",
-        "k8s"
-    ]
+  "language": "golang",
+  "application_list": [
+    "user-manager"
+  ],
+  "tools": [
+    "azure",
+    "docker",
+    "k8s"
+  ]
 }
