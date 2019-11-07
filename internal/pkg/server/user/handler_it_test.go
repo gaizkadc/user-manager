@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2018 Nalej - All Rights Reserved
+ * Copyright 2019 Nalej
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /*
@@ -145,7 +157,6 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(err).Should(gomega.Succeed())
 		client = grpc_user_manager_go.NewUserManagerClient(conn)
 		rand.Seed(ginkgo.GinkgoRandomSeed())
-		
 
 	})
 
@@ -153,7 +164,6 @@ var _ = ginkgo.Describe("User service", func() {
 		server.Stop()
 		listener.Close()
 	})
-
 
 	ginkgo.BeforeEach(func() {
 
@@ -285,9 +295,9 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(err).To(gomega.Succeed())
 
 		changeRequest := &grpc_user_manager_go.ChangePasswordRequest{
-			Email:    added.Email,
-			Password:    toAdd.Password,
-			NewPassword: "newPassword",
+			Email:          added.Email,
+			Password:       toAdd.Password,
+			NewPassword:    "newPassword",
 			OrganizationId: targetOrganization.OrganizationId,
 		}
 		success, err := client.ChangePassword(context.Background(), changeRequest)
@@ -307,9 +317,9 @@ var _ = ginkgo.Describe("User service", func() {
 		gomega.Expect(err).To(gomega.Succeed())
 
 		changeRequest := &grpc_user_manager_go.ChangePasswordRequest{
-			Email:    added.Email,
-			Password:    "WrongPassword",
-			NewPassword: "newPassword",
+			Email:          added.Email,
+			Password:       "WrongPassword",
+			NewPassword:    "newPassword",
 			OrganizationId: targetOrganization.OrganizationId,
 		}
 		_, err = client.ChangePassword(context.Background(), changeRequest)
@@ -456,7 +466,7 @@ var _ = ginkgo.Describe("User service", func() {
 	})
 
 	ginkgo.Context("userCache tests", func() {
-		ginkgo.It("should be able to add an organization Roles", func(){
+		ginkgo.It("should be able to add an organization Roles", func() {
 
 			toAdd := &grpc_user_manager_go.AddUserRequest{
 				OrganizationId: targetOrganization.OrganizationId,
@@ -477,7 +487,6 @@ var _ = ginkgo.Describe("User service", func() {
 			isOwner, err = userCache.roleIsOwner(targetOrganization.OrganizationId, "WrongID")
 			gomega.Expect(err).To(gomega.Succeed())
 			gomega.Expect(isOwner).NotTo(gomega.BeTrue())
-
 
 		})
 	})

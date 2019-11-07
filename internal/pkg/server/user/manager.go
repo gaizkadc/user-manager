@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2018 Nalej - All Rights Reserved
+ * Copyright 2019 Nalej
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package user
@@ -33,8 +45,8 @@ func NewManager(
 	usersClient grpc_user_go.UsersClient,
 	roleClient grpc_role_go.RolesClient,
 ) Manager {
-	return Manager{accessClient:accessClient, usersClient: usersClient, roleClient: roleClient,
-		usersCache:NewUsersCache(accessClient, usersClient, roleClient)}
+	return Manager{accessClient: accessClient, usersClient: usersClient, roleClient: roleClient,
+		usersCache: NewUsersCache(accessClient, usersClient, roleClient)}
 }
 
 // AddUser adds a new user to an organization.
@@ -80,7 +92,7 @@ func (m *Manager) RemoveUser(userID *grpc_user_go.UserId) error {
 	if vErr != nil {
 		return conversions.ToGRPCError(vErr)
 	}
-	if ! canRemove {
+	if !canRemove {
 		return derrors.NewInvalidArgumentError(fmt.Sprintf("can not remove user, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG))
 	}
 	// clear userCache
@@ -182,7 +194,7 @@ func (m *Manager) AssignRole(assignRoleRequest *grpc_user_manager_go.AssignRoleR
 	if err != nil {
 		return nil, conversions.ToGRPCError(err)
 	}
-	if ! canAssign {
+	if !canAssign {
 		return nil, conversions.ToDerror(derrors.NewInvalidArgumentError(fmt.Sprintf("can not assign role, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG)))
 	}
 
@@ -223,7 +235,7 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		MemberSince:    smUser.MemberSince,
 		RoleId:         role.RoleId,
 		RoleName:       role.Name,
-		Internal: role.Internal,
+		Internal:       role.Internal,
 	}, nil
 }
 
