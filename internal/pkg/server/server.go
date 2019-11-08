@@ -1,5 +1,17 @@
 /*
- * Copyright (C) 2018 Nalej - All Rights Reserved
+ * Copyright 2019 Nalej
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package server
@@ -21,7 +33,6 @@ import (
 // Service structure with the configuration and the gRPC server.
 type Service struct {
 	Configuration Config
-
 }
 
 // NewService creates a new system model service.
@@ -39,14 +50,14 @@ type Clients struct {
 }
 
 // GetClients creates the required connections with the remote clients.
-func (s * Service) GetClients() (* Clients, derrors.Error) {
+func (s *Service) GetClients() (*Clients, derrors.Error) {
 	authxConn, err := grpc.Dial(s.Configuration.AuthxAddress, grpc.WithInsecure())
-	if err != nil{
+	if err != nil {
 		return nil, derrors.AsError(err, "cannot create connection with the authx component")
 	}
 
 	smConn, err := grpc.Dial(s.Configuration.SystemModelAddress, grpc.WithInsecure())
-	if err != nil{
+	if err != nil {
 		return nil, derrors.AsError(err, "cannot create connection with the system model component")
 	}
 
@@ -60,12 +71,12 @@ func (s * Service) GetClients() (* Clients, derrors.Error) {
 // Run the service, launch the REST service handler.
 func (s *Service) Run() error {
 	cErr := s.Configuration.Validate()
-	if cErr != nil{
+	if cErr != nil {
 		log.Fatal().Str("err", cErr.DebugReport()).Msg("invalid configuration")
 	}
 	s.Configuration.Print()
 	clients, cErr := s.GetClients()
-	if cErr != nil{
+	if cErr != nil {
 		log.Fatal().Str("err", cErr.DebugReport()).Msg("Cannot create clients")
 	}
 
