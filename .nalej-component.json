@@ -8,7 +8,6 @@
     "user-manager"
   ],
   "tools": [
-    "azure",
     "docker",
     "k8s"
   ]
