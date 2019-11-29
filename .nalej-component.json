@@ -8,6 +8,9 @@
   "image_list": [
     "user-manager"
   ],
+  "component_list": [
+    "user-manager"
+  ],
   "tools": [
     "docker",
     "k8s"
