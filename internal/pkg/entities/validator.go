@@ -94,7 +94,7 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 	if addUserRequest.Email == "" {
 		return derrors.NewInvalidArgumentError(emptyEmail)
 	}
-	var rxEmail = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	var rxEmail = regexp.MustCompile(`^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$`)
 	if len(addUserRequest.Email) > 254 || !rxEmail.MatchString(addUserRequest.Email) {
 		return derrors.NewInvalidArgumentError(invalidEmail)
 	}
