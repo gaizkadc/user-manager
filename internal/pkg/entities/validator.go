@@ -22,12 +22,17 @@ import (
 	"github.com/nalej/grpc-organization-go"
 	"github.com/nalej/grpc-user-go"
 	"github.com/nalej/grpc-user-manager-go"
+	"regexp"
 )
 
-const emptyOrganizationId = "organization_id cannot be empty"
-const emptyEmail = "email cannot be empty"
-const emptyName = "name cannot be empty"
-const emptyRoleID = "role_id cannot be empty"
+const (
+	emptyOrganizationId = "organization_id cannot be empty"
+	emptyEmail          = "email cannot be empty"
+	emptyName           = "name cannot be empty"
+	emptyRoleID         = "role_id cannot be empty"
+	emptyPassword       = "password cannot be empty"
+	invalidEmail        = "invalid email"
+)
 
 func ValidOrganizationID(organizationID *grpc_organization_go.OrganizationId) derrors.Error {
 	if organizationID.OrganizationId == "" {
@@ -89,8 +94,12 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 	if addUserRequest.Email == "" {
 		return derrors.NewInvalidArgumentError(emptyEmail)
 	}
+	var rxEmail = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	if len(addUserRequest.Email) > 254 || !rxEmail.MatchString(addUserRequest.Email) {
+		return derrors.NewInvalidArgumentError(invalidEmail)
+	}
 	if addUserRequest.Password == "" {
-		return derrors.NewInvalidArgumentError("password cannot be empty")
+		return derrors.NewInvalidArgumentError(emptyPassword)
 	}
 	if addUserRequest.Name == "" {
 		return derrors.NewInvalidArgumentError(emptyName)
