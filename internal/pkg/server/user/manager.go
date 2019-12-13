@@ -28,6 +28,7 @@ import (
 	"github.com/nalej/grpc-user-manager-go"
 	"github.com/nalej/grpc-utils/pkg/conversions"
 	"github.com/nalej/user-manager/internal/pkg/entities"
+	"github.com/rs/zerolog/log"
 )
 
 // Manager structure with the required clients for roles operations.
@@ -245,5 +246,6 @@ func (m *Manager) ListRoles(organizationID *grpc_organization_go.OrganizationId)
 }
 
 func (m *Manager) UpdateUser(updateUserRequest *grpc_user_go.UpdateUserRequest) (*grpc_common_go.Success, error) {
+	log.Debug().Interface("update user request", updateUserRequest).Msg("update user request received")
 	return m.usersClient.Update(context.Background(), updateUserRequest)
 }
