@@ -111,12 +111,12 @@
   version = "v0.0.24"
 
 [[projects]]
-  digest = "1:67db03ffc141ff0c065e6cece2c499073ad71f982d669c1fb771e56a3a6cce60"
+  digest = "1:dbb015c2a664af397df2b49127d6c197dc2122fa14ceb784bf05a0fb62f58adb"
   name = "github.com/nalej/grpc-user-go"
   packages = ["."]
   pruneopts = ""
-  revision = "d7a8c6bbc08b91a4f53d85143a431833fce211dc"
-  version = "v0.0.34"
+  revision = "271707126104437dda70b7b115ebb1dd601549b3"
+  version = "v0.0.35"
 
 [[projects]]
   digest = "1:2dfa28c6e7a7fdd554e3b1c848c0eb71a472c4ccc241f0ae919a2f45847a956b"
