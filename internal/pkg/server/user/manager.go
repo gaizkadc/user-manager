@@ -28,7 +28,6 @@ import (
 	"github.com/nalej/grpc-user-manager-go"
 	"github.com/nalej/grpc-utils/pkg/conversions"
 	"github.com/nalej/user-manager/internal/pkg/entities"
-	"github.com/rs/zerolog/log"
 )
 
 // Manager structure with the required clients for roles operations.
