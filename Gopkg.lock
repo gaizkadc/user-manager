@@ -111,20 +111,20 @@
   version = "v0.0.24"
 
 [[projects]]
-  digest = "1:dbb015c2a664af397df2b49127d6c197dc2122fa14ceb784bf05a0fb62f58adb"
+  digest = "1:c28ae2de3465b87c885623e72f1a3d8df64c2eac7dde5bd920d53e256e29ba52"
   name = "github.com/nalej/grpc-user-go"
   packages = ["."]
   pruneopts = ""
-  revision = "271707126104437dda70b7b115ebb1dd601549b3"
-  version = "v0.0.35"
+  revision = "acad5ce030ec1f89c2e4bb90c11b89fb19427c46"
+  version = "v0.0.37"
 
 [[projects]]
-  digest = "1:2dfa28c6e7a7fdd554e3b1c848c0eb71a472c4ccc241f0ae919a2f45847a956b"
+  digest = "1:7a32bdd201afeaf3feddc70ef8dbc24fc76690dc2176ff7bf350b4cdbe0b9f42"
   name = "github.com/nalej/grpc-user-manager-go"
   packages = ["."]
   pruneopts = ""
-  revision = "e76f25fa17db50e2bfc1ff0e7de29beb7d5eea9b"
-  version = "v0.0.28"
+  revision = "62bbbd03621cec64f40f2218523622a9cc6a79b4"
+  version = "v0.0.30"
 
 [[projects]]
   digest = "1:0261633894934ecc23f9b2551c21676dc5e89554d76aafd8ccb84aff21196799"

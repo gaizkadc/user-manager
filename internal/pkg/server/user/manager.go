@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Nalej
+ * Copyright 2020 Nalej
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,11 @@ func (m *Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (
 		OrganizationId: addUserRequest.OrganizationId,
 		Email:          addUserRequest.Email,
 		Name:           addUserRequest.Name,
-		PhotoUrl:       addUserRequest.PhotoUrl,
+		PhotoBase64:    addUserRequest.PhotoBase64,
+		LastName:       addUserRequest.LastName,
+		Location:       addUserRequest.Location,
+		Phone:          addUserRequest.Phone,
+		Title:          addUserRequest.Title,
 	}
 	// 1. Add the user to system model
 	user, err := m.usersClient.AddUser(context.Background(), addRequest)
@@ -231,11 +235,16 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		OrganizationId: smUser.OrganizationId,
 		Email:          smUser.Email,
 		Name:           smUser.Name,
-		PhotoUrl:       smUser.PhotoUrl,
+		PhotoBase64:    smUser.PhotoBase64,
 		MemberSince:    smUser.MemberSince,
 		RoleId:         role.RoleId,
 		RoleName:       role.Name,
-		Internal:       role.Internal,
+		InternalRole:   role.Internal,
+		LastName:       smUser.LastName,
+		Title:          smUser.Title,
+		LastLogin:      0,
+		Phone:          smUser.Phone,
+		Location:       smUser.Location,
 	}, nil
 }
 
