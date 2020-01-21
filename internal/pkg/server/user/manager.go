@@ -227,7 +227,7 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 	if err != nil {
 		return nil, err
 	}
-	role, err := m.accessClient.GetUserRole(context.Background(), userID)
+	authxUserInfo, err := m.accessClient.GetUserAuthxInfo(context.Background(), userID)
 	if err != nil {
 		return nil, err
 	}
@@ -237,12 +237,12 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		Name:           smUser.Name,
 		PhotoBase64:    smUser.PhotoBase64,
 		MemberSince:    smUser.MemberSince,
-		RoleId:         role.RoleId,
-		RoleName:       role.Name,
-		InternalRole:   role.Internal,
+		RoleId:         authxUserInfo.RoleId,
+		RoleName:       authxUserInfo.RoleName,
+		InternalRole:   authxUserInfo.InternalRole,
 		LastName:       smUser.LastName,
 		Title:          smUser.Title,
-		LastLogin:      0,
+		LastLogin:      authxUserInfo.LastLogin,
 		Phone:          smUser.Phone,
 		Location:       smUser.Location,
 	}, nil

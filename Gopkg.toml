@@ -24,7 +24,7 @@
 
 [[constraint]]
     name="github.com/nalej/grpc-authx-go"
-    version="=v0.0.53"
+    version="=v0.0.55"
 
 [[constraint]]
     name="github.com/nalej/grpc-role-go"
@@ -35,13 +35,13 @@
     version="=v0.0.30"
 
 [[constraint]]
+    name="github.com/nalej/grpc-user-go"
+    version="=v0.0.37"
+
+[[constraint]]
     name="github.com/nalej/grpc-organization-go"
     version="=v0.0.29"
 
 [[constraint]]
     name="github.com/nalej/grpc-common-go"
     version="=v0.0.34"
-
-[[constraint]]
-    name="github.com/nalej/grpc-user-go"
-    version="=v0.0.37"

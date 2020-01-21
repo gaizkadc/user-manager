@@ -55,12 +55,12 @@
   version = "v0.0.2"
 
 [[projects]]
-  digest = "1:be9824efa8944bc7180a51b2e0c1b62d49902a3e5faa3a1ed57a15358e465096"
+  digest = "1:7a84675f7fe38615dae4af543aeb616a73b202e5cc18503dc1a4a9a6e2312aa6"
   name = "github.com/nalej/grpc-authx-go"
   packages = ["."]
   pruneopts = ""
-  revision = "1eda9772318a852d1de2139e075962e95fc8ef76"
-  version = "v0.0.53"
+  revision = "3e72e6210ced91bfe0fb34630195965dca3ac3e0"
+  version = "v0.0.55"
 
 [[projects]]
   digest = "1:afebe5d9834769b2016dbd9959f423658e53e6691c08090a746d26e2312b6207"
