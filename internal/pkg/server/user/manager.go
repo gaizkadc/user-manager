@@ -231,6 +231,11 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 	if err != nil {
 		return nil, err
 	}
+	role, err := m.roleClient.GetRole(context.Background(), &grpc_role_go.RoleId{
+		OrganizationId: userID.OrganizationId,
+		RoleId:         authxUserInfo.RoleId,
+	})
+
 	return &grpc_user_manager_go.User{
 		OrganizationId: smUser.OrganizationId,
 		Email:          smUser.Email,
@@ -238,7 +243,7 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		PhotoBase64:    smUser.PhotoBase64,
 		MemberSince:    smUser.MemberSince,
 		RoleId:         authxUserInfo.RoleId,
-		RoleName:       authxUserInfo.RoleName,
+		RoleName:       role.Name,
 		InternalRole:   authxUserInfo.InternalRole,
 		LastName:       smUser.LastName,
 		Title:          smUser.Title,
