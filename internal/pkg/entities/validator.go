@@ -105,7 +105,7 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 		return derrors.NewInvalidArgumentError(emptyName)
 	}
 	if addUserRequest.RoleId == "" {
-		return derrors.NewInvalidArgumentError(emptyOrganizationId)
+		return derrors.NewInvalidArgumentError(emptyRoleID)
 	}
 	return nil
 }
