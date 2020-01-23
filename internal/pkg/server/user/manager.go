@@ -28,8 +28,6 @@ import (
 	"github.com/nalej/grpc-user-manager-go"
 	"github.com/nalej/grpc-utils/pkg/conversions"
 	"github.com/nalej/user-manager/internal/pkg/entities"
-	"github.com/rs/zerolog/log"
-	"strconv"
 )
 
 // Manager structure with the required clients for roles operations.
@@ -237,8 +235,6 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		OrganizationId: userID.OrganizationId,
 		RoleId:         authxUserInfo.RoleId,
 	})
-
-	log.Debug().Str("last login", strconv.FormatInt(authxUserInfo.LastLogin, 10)).Msg("last login from user")
 
 	return &grpc_user_manager_go.User{
 		OrganizationId: smUser.OrganizationId,
