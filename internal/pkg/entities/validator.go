@@ -29,6 +29,8 @@ const (
 	emptyOrganizationId = "organization_id cannot be empty"
 	emptyEmail          = "email cannot be empty"
 	emptyName           = "name cannot be empty"
+	emptyLastName       = "last_name cannot be empty"
+	emptyTitle          = "title cannot be empty"
 	emptyRoleID         = "role_id cannot be empty"
 	emptyPassword       = "password cannot be empty"
 	invalidEmail        = "invalid email"
@@ -105,10 +107,10 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 		return derrors.NewInvalidArgumentError(emptyName)
 	}
 	if addUserRequest.LastName == "" {
-		return derrors.NewInvalidArgumentError(emptyName)
+		return derrors.NewInvalidArgumentError(emptyLastName)
 	}
 	if addUserRequest.Title == "" {
-		return derrors.NewInvalidArgumentError(emptyName)
+		return derrors.NewInvalidArgumentError(emptyTitle)
 	}
 	if addUserRequest.RoleId == "" {
 		return derrors.NewInvalidArgumentError(emptyRoleID)
@@ -143,10 +145,10 @@ func ValidUpdateUserRequest(updateUserRequest *grpc_user_go.UpdateUserRequest) d
 		return derrors.NewInvalidArgumentError(emptyName)
 	}
 	if updateUserRequest.UpdateLastName && updateUserRequest.LastName == "" {
-		return derrors.NewInvalidArgumentError(emptyName)
+		return derrors.NewInvalidArgumentError(emptyLastName)
 	}
 	if updateUserRequest.UpdateTitle && updateUserRequest.Title == "" {
-		return derrors.NewInvalidArgumentError(emptyName)
+		return derrors.NewInvalidArgumentError(emptyTitle)
 	}
 	return nil
 }
