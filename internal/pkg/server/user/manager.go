@@ -53,7 +53,7 @@ func NewManager(
 func (m *Manager) AddUser(addUserRequest *grpc_user_manager_go.AddUserRequest) (*grpc_user_manager_go.User, error) {
 
 	// clear userCache
-	m.usersCache.Clear(addUserRequest.OrganizationId)
+	_ = m.usersCache.Clear(addUserRequest.OrganizationId)
 
 	addRequest := &grpc_user_go.AddUserRequest{
 		OrganizationId: addUserRequest.OrganizationId,
@@ -100,7 +100,7 @@ func (m *Manager) RemoveUser(userID *grpc_user_go.UserId) error {
 		return derrors.NewInvalidArgumentError(fmt.Sprintf("can not remove user, last %d user in the system", grpc_authx_go.AccessPrimitive_ORG))
 	}
 	// clear userCache
-	m.usersCache.Clear(userID.OrganizationId)
+	_ = m.usersCache.Clear(userID.OrganizationId)
 
 	// 1. Remove user from authx
 	deleteCredentialsRequest := &grpc_authx_go.DeleteCredentialsRequest{
@@ -155,7 +155,7 @@ func (m *Manager) ChangePassword(request *grpc_user_manager_go.ChangePasswordReq
 func (m *Manager) AddRole(addRoleRequest *grpc_user_manager_go.AddRoleRequest) (*grpc_authx_go.Role, error) {
 
 	// clear userCache
-	m.usersCache.Clear(addRoleRequest.OrganizationId)
+	_ = m.usersCache.Clear(addRoleRequest.OrganizationId)
 
 	// 1. Add the role to the organization in SM
 	addRequest := &grpc_role_go.AddRoleRequest{
@@ -203,7 +203,7 @@ func (m *Manager) AssignRole(assignRoleRequest *grpc_user_manager_go.AssignRoleR
 	}
 
 	// clear userCache
-	m.usersCache.Clear(assignRoleRequest.OrganizationId)
+	_ = m.usersCache.Clear(assignRoleRequest.OrganizationId)
 
 	// 1. Update on authx
 	editRequest := &grpc_authx_go.EditUserRoleRequest{
@@ -235,6 +235,9 @@ func (m *Manager) GetUser(userID *grpc_user_go.UserId) (*grpc_user_manager_go.Us
 		OrganizationId: userID.OrganizationId,
 		RoleId:         authxUserInfo.RoleId,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &grpc_user_manager_go.User{
 		OrganizationId: smUser.OrganizationId,

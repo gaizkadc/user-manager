@@ -104,6 +104,12 @@ func ValidAddUserRequest(addUserRequest *grpc_user_manager_go.AddUserRequest) de
 	if addUserRequest.Name == "" {
 		return derrors.NewInvalidArgumentError(emptyName)
 	}
+	if addUserRequest.LastName == "" {
+		return derrors.NewInvalidArgumentError(emptyName)
+	}
+	if addUserRequest.Title == "" {
+		return derrors.NewInvalidArgumentError(emptyName)
+	}
 	if addUserRequest.RoleId == "" {
 		return derrors.NewInvalidArgumentError(emptyRoleID)
 	}
@@ -126,12 +132,21 @@ func ValidChangePasswordRequest(request *grpc_user_manager_go.ChangePasswordRequ
 	return nil
 }
 
-func ValidUpdateUserRequest(addUserRequest *grpc_user_go.UpdateUserRequest) derrors.Error {
-	if addUserRequest.OrganizationId == "" {
+func ValidUpdateUserRequest(updateUserRequest *grpc_user_go.UpdateUserRequest) derrors.Error {
+	if updateUserRequest.OrganizationId == "" {
 		return derrors.NewInvalidArgumentError(emptyOrganizationId)
 	}
-	if addUserRequest.Email == "" {
+	if updateUserRequest.Email == "" {
 		return derrors.NewInvalidArgumentError(emptyEmail)
+	}
+	if updateUserRequest.UpdateName && updateUserRequest.Name == "" {
+		return derrors.NewInvalidArgumentError(emptyName)
+	}
+	if updateUserRequest.UpdateLastName && updateUserRequest.LastName == "" {
+		return derrors.NewInvalidArgumentError(emptyName)
+	}
+	if updateUserRequest.UpdateTitle && updateUserRequest.Title == "" {
+		return derrors.NewInvalidArgumentError(emptyName)
 	}
 	return nil
 }
