@@ -125,9 +125,6 @@ func ValidChangePasswordRequest(request *grpc_user_manager_go.ChangePasswordRequ
 	if request.Email == "" {
 		return derrors.NewInvalidArgumentError(emptyEmail)
 	}
-	if request.Password == "" {
-		return derrors.NewInvalidArgumentError("password cannot be empty")
-	}
 	if request.NewPassword == "" {
 		return derrors.NewInvalidArgumentError("new_password cannot be empty")
 	}
