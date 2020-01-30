@@ -55,12 +55,12 @@
   version = "v0.0.3"
 
 [[projects]]
-  digest = "1:3538c75e37d491ffbbe3900bc0f758d5f3db0db00ae67db8c12e6835fb456907"
+  digest = "1:a3f50c1afb613c57012ba56ec3fb852c6b3b940ebb431ebaa051548f5202e335"
   name = "github.com/nalej/grpc-authx-go"
   packages = ["."]
   pruneopts = ""
-  revision = "340e66ad6f0251791d435c995ffaea3c58d8ad25"
-  version = "v0.0.56"
+  revision = "04d9be7ca966185935373d3a3309b6e8b8a9af37"
+  version = "v0.0.57"
 
 [[projects]]
   digest = "1:f7affbf0487bfef4c92c9be9234abed9edc6143336ebada5cf0c57ff929d4e82"
@@ -87,12 +87,12 @@
   version = "v0.0.31"
 
 [[projects]]
-  digest = "1:387d19966af24e7d1fb4b36fcef08323c5ea25f9ab51f41c435a53e60e681f6c"
+  digest = "1:e4d08c0d13382dba49921fc0d246b79134b49fb584b0fb711884aeba3250389b"
   name = "github.com/nalej/grpc-organization-go"
   packages = ["."]
   pruneopts = ""
-  revision = "6ff98153a51ca6d8c47512c2456f9f3b5ae31f9d"
-  version = "v0.0.29"
+  revision = "ed59dc9b5531417b1fb89cadcda8bca82eaca0c7"
+  version = "v0.0.35"
 
 [[projects]]
   digest = "1:04665058968000b594204bad78216f04d1b575f8fefe558a4eeecc75964ebf62"
@@ -103,12 +103,12 @@
   version = "v0.0.3"
 
 [[projects]]
-  digest = "1:e00e157618d834143846b905f6f01ad6b522e9268f1c37bcd9468d29eb6b91d8"
+  digest = "1:f29bc544ff12b870f24feb593fe2849b723503660c9a60bf7845db9141af239c"
   name = "github.com/nalej/grpc-role-go"
   packages = ["."]
   pruneopts = ""
-  revision = "838929ce73ace0b28026f744d2ddcfeb209f05b3"
-  version = "v0.0.24"
+  revision = "996cc30fc02620fd2270e99ede99b1ffcac8e39d"
+  version = "v0.0.25"
 
 [[projects]]
   digest = "1:c28ae2de3465b87c885623e72f1a3d8df64c2eac7dde5bd920d53e256e29ba52"
@@ -119,12 +119,12 @@
   version = "v0.0.37"
 
 [[projects]]
-  digest = "1:7a32bdd201afeaf3feddc70ef8dbc24fc76690dc2176ff7bf350b4cdbe0b9f42"
+  digest = "1:bb81afe1c2405b7f3af65b2e9d8b099721a38cb4f9a18dca009ae2864a9a3cd5"
   name = "github.com/nalej/grpc-user-manager-go"
   packages = ["."]
   pruneopts = ""
-  revision = "62bbbd03621cec64f40f2218523622a9cc6a79b4"
-  version = "v0.0.30"
+  revision = "8dcfbfd105ee3396f5fd76adf60383a3be314964"
+  version = "v0.0.31"
 
 [[projects]]
   digest = "1:0261633894934ecc23f9b2551c21676dc5e89554d76aafd8ccb84aff21196799"
